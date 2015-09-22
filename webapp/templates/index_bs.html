@@ -1,0 +1,20 @@
+{% extends "base_bs.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Index{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>Stock Market Ticker</h1>
+</div>
+
+<form action="" method='POST'>
+<p>{{ form.hidden_tag() }}<p>
+<p>{{ wtf.form_field(form.name) }}</p>
+<p>{{ form.feature.label }}</p>
+<p>{{ wtf.form_field(form.feature) }}</p>
+<p>{{ form.history.label }}</p>
+<p>{{ wtf.form_field(form.history) }}</p>
+{{ form.submit }}
+</form>
+{% endblock %}

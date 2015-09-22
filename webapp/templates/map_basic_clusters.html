@@ -1,0 +1,61 @@
+{% extends "base_bs.html" %}
+{% block title %}Collisions map{% endblock %}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.css"/>
+<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/MarkerCluster.css" />
+<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/MarkerCluster.Default.css" />
+<script src="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.js"></script>
+<script type='text/javascript' src='http://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/leaflet.markercluster.js'></script>
+{% endblock %}
+{% block page_content %}
+<div class="page-header">
+    <h1> The Map </h1>
+</div>
+<div id="map"></div>
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script>
+// initialize the map
+
+var map = L.map('map').setView([40.759, -73.952], 13);
+
+// load a tile layer
+L.tileLayer('https://api.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token={accessToken}',
+{
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="http://mapbox.com">Mapbox</a>',
+    accessToken: 'pk.eyJ1IjoiZG1pY2siLCJhIjoiY2lla2c0cjQyMDAwcHMybTZ3bzNxYzFoeiJ9.kuMWrjX9t9gRWS_5j3t72Q'
+}).addTo(map);
+
+
+
+// SIMPLER
+$.getJSON("/geojson_data", function(data){
+    // add GeoJSON layer to the map once the file is loaded
+    L.geoJson(data).addTo(map);
+});
+
+// DEFINE THE CLUSTER LAYER
+//var markers = L.markerClusterGroup();
+
+//// CALL THE GEOJSON HERE
+//$.getJSON("/geojson_data", function(data) {
+    //var geojson = L.geoJson(data, {
+        //onEachFeature: function (feature, layer) {
+            //// USE A CUSTOM MARKER
+            //layer.setIcon(L.mapbox.marker.icon({'marker-symbol': 'circle-stroked', 'marker-color': '59245f'}));
+            //// ADD A POPUP WITH A CHART
+            //layer.bindPopup("<h1>" Hello there "</h1>");
+        //}
+    //});
+    //markers.addLayer(geojson);
+    //// CONSTRUCT THE MAP
+    //markers.addTo(map);
+//});
+
+// Set map height to 80% of window height
+$("#map").height($(window).height()*0.7);
+map.invalidateSize();
+</script>
+{% endblock %}

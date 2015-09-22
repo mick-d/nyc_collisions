@@ -1,0 +1,59 @@
+{% extends "base_bs.html" %}
+{% block title %}Collisions map{% endblock %}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.css"/>
+<script src="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.js"></script>
+{% endblock %}
+{% block page_content %}
+<div class="page-header">
+    <h1> The Map </h1>
+</div>
+<div id="map"></div>
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script>
+// initialize the map
+
+
+
+// base tile layer
+streets = L.tileLayer('https://api.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="http://mapbox.com">Mapbox</a>',
+    accessToken: 'pk.eyJ1IjoiZG1pY2siLCJhIjoiY2lla2c0cjQyMDAwcHMybTZ3bzNxYzFoeiJ9.kuMWrjX9t9gRWS_5j3t72Q',
+    maxZoom: 17,
+    minZoom: 9
+});
+// bike lanes layer
+// http://tile.waymarkedtrails.org/cycling{z}/{x}/{y}.png
+// http://a.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png
+//
+cycling_lanes = L.tileLayer('http://tile.waymarkedtrails.org/cycling/{z}/{x}/{y}.png', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> under <a href="http://www.openstreetmap.org/copyright">ODbL</a>, elevation data by Imagery &copy; <a href="http://cycling.waymarkedtrails.org/en/help/acknowledgements">SRTM/ASTER</a>',
+    maxZoom: 17,
+    minZoom: 9
+});
+
+var map = L.map('map', {
+    center: [40.759, -73.952],
+    zoom: 13,
+    layers: [streets, cycling_lanes]
+});
+
+var baseMaps = {
+    "Streets": streets
+};
+
+var overlayMaps = {
+    "Cycling lanes": cycling_lanes
+};
+
+// L.control.layers(baseMaps, overlayMaps).addTo(map);
+L.control.layers(null, overlayMaps).addTo(map);
+
+// Set map height to 80% of window height
+$("#map").height($(window).height()*0.7);
+map.invalidateSize();
+</script>
+{% endblock %}

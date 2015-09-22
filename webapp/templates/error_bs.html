@@ -1,0 +1,13 @@
+{% extends "base_bs.html" %}
+
+{% block title %}Internal Server Error TT{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    {% if error_message %}
+    <h1>{{ error_message }}</h1>
+    {% else %}
+    <h1>Internal Server Error</h1>
+    {% endif %}
+</div>
+{% endblock %}
