@@ -24,6 +24,24 @@ var map = L.map('map', {
     zoom: 13
 });
 
+map.on('zoomend ', function(e) {
+        if (map.getZoom() < 14) {
+            map.removeLayer(collisions_layer_cleanmanhnetw);
+        }
+        //else if (map.getZoom() >= 14) {
+            //map.addLayer(collisions_layer_cleanmanhnetw);
+        //}
+    });
+
+var geojsonMarkerOptions = {
+    radius: 6,
+    fillColor: "#0087ff",
+    color: "#000",
+    weight: 1,
+    opacity: 1,
+    fillOpacity: 0.8
+};
+
 // base tile layer
 streets = L.tileLayer('https://api.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="http://mapbox.com">Mapbox</a>',
@@ -32,18 +50,33 @@ streets = L.tileLayer('https://api.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y
     minZoom: 9
 }).addTo(map);
 
-cycling_lanes = L.tileLayer('http://tile.waymarkedtrails.org/cycling/{z}/{x}/{y}.png', {
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> under <a href="http://www.openstreetmap.org/copyright">ODbL</a>, elevation data by Imagery &copy; <a href="http://cycling.waymarkedtrails.org/en/help/acknowledgements">SRTM/ASTER</a>',
-    maxZoom: 17,
+//cycling_lanes = L.tileLayer('http://tile.waymarkedtrails.org/cycling/{z}/{x}/{y}.png', {
+    //attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> under <a href="http://www.openstreetmap.org/copyright">ODbL</a>, elevation data by Imagery &copy; <a href="http://cycling.waymarkedtrails.org/en/help/acknowledgements">SRTM/ASTER</a>',
+    //maxZoom: 17,
+    //minZoom: 9
+//});
+
+running_heat = L.tileLayer('http://globalheat.strava.com/tiles/running/color3/{z}/{x}/{y}.png', {
+    attribution: '<a href="http://labs.strava.com/heatmap/">Strava</a>',
+   // maxZoom: 17,
     minZoom: 9
-}).addTo(map);
+});
+
+cycling_heat = L.tileLayer('http://globalheat.strava.com/tiles/cycling/color3/{z}/{x}/{y}.png', {
+    attribution: '<a href="http://labs.strava.com/heatmap/">Strava</a>',
+   // maxZoom: 17,
+    minZoom: 9
+});
+
+
+//http:globalheat.strava.com/tiles/running/color2/{z}/{x}/{y}.png
 
 var ratIcon = L.icon({
     iconUrl: '/js/boom.png',
     iconSize: [55,60]
   });
 
-var collisions_layer = L.geoJson(false, {
+var collisions_layer_all = L.geoJson(false, {
   //  onEachFeature: onEachFeature,
     pointToLayer: function(feature,latlng){
         var marker = L.marker(latlng,{icon: ratIcon});
@@ -53,14 +86,111 @@ var collisions_layer = L.geoJson(false, {
     }
 });//.addTo(map);
 
-// SIMPLER
-var clusters = L.markerClusterGroup()
-$.getJSON("/geojson_data", function(data){
+var clusters_all = L.markerClusterGroup()
+$.getJSON("/geojson_all", function(data){
     // add GeoJSON layer to the map once the file is loaded
     // collisions_layer.clearLayers();
-    collisions_layer.addData(data);
-    clusters.addLayer(collisions_layer);
-    map.addLayer(clusters);
+    collisions_layer_all.addData(data);
+    clusters_all.addLayer(collisions_layer_all);
+//    map.addLayer(clusters_all);
+});
+
+var collisions_layer_ped = L.geoJson(false, {
+  //  onEachFeature: onEachFeature,
+    pointToLayer: function(feature,latlng){
+        var marker = L.marker(latlng,{icon: ratIcon});
+        marker.bindPopup("<b>NUMBER OF PERSONS INJURED: </b>" + feature.properties["NUMBER OF PERSONS INJURED"] + "<br/>" +
+                         "<b>NUMBER OF PERSONS KILLED: </b>" + feature.properties["NUMBER OF PERSONS KILLED"] + "<br/>");
+        return marker;
+    }
+});//.addTo(map);
+
+var clusters_ped = L.markerClusterGroup()
+$.getJSON("/geojson_ped", function(data){
+    // add GeoJSON layer to the map once the file is loaded
+    // collisions_layer.clearLayers();
+    collisions_layer_ped.addData(data);
+    clusters_ped.addLayer(collisions_layer_ped);
+//    map.addLayer(clusters_ped);
+});
+
+var collisions_layer_bike = L.geoJson(false, {
+  //  onEachFeature: onEachFeature,
+    pointToLayer: function(feature,latlng){
+        var marker = L.marker(latlng,{icon: ratIcon});
+        marker.bindPopup("<b>NUMBER OF PERSONS INJURED: </b>" + feature.properties["NUMBER OF PERSONS INJURED"] + "<br/>" +
+                         "<b>NUMBER OF PERSONS KILLED: </b>" + feature.properties["NUMBER OF PERSONS KILLED"] + "<br/>");
+        return marker;
+    }
+});//.addTo(map);
+
+var clusters_bike = L.markerClusterGroup()
+$.getJSON("/geojson_bike", function(data){
+    // add GeoJSON layer to the map once the file is loaded
+    // collisions_layer.clearLayers();
+    collisions_layer_bike.addData(data);
+    clusters_bike.addLayer(collisions_layer_bike);
+//    map.addLayer(clusters_bike);
+});
+
+var collisions_layer_manhnetw = L.geoJson(false, {
+  //  onEachFeature: onEachFeature,
+    pointToLayer: function(feature,latlng){
+        var marker = L.marker(latlng,{icon: ratIcon});
+        return marker;
+    }
+});//.addTo(map);
+
+var clusters_manhnetw = L.markerClusterGroup()
+$.getJSON("/geojson_manh_netw", function(data){
+    // add GeoJSON layer to the map once the file is loaded
+    // collisions_layer.clearLayers();
+    collisions_layer_manhnetw.addData(data);
+    clusters_manhnetw.addLayer(collisions_layer_manhnetw);
+    //map.addLayer(clusters_manhnetw);
+});
+
+//var collisions_layer_cleanmanhnetw = L.geoJson(false, {
+  ////  onEachFeature: onEachFeature,
+    //pointToLayer: function(feature,latlng){
+        //var marker = L.marker(latlng,{icon: ratIcon});
+        //return marker;
+    //}
+//});//.addTo(map);
+
+//var clusters_cleanmanhnetw = L.markerClusterGroup()
+//$.getJSON("/geojson_cleanmanh_netw", function(data){
+    //// add GeoJSON layer to the map once the file is loaded
+    //// collisions_layer.clearLayers();
+    //collisions_layer_cleanmanhnetw.addData(data);
+    //clusters_cleanmanhnetw.addLayer(collisions_layer_cleanmanhnetw);
+////    map.addLayer(clusters_netw);
+//});
+
+var collisions_layer_cleanmanhnetw = L.geoJson(false, {
+    pointToLayer: function(feature,latlng){
+        var marker = L.circleMarker(latlng, geojsonMarkerOptions);
+        marker.bindPopup("<b>Longitude: </b>" + feature.properties["Lon"] + "<br/>" +
+                         "<b>Latitude: </b>" + feature.properties["Lat"] + "<br/>");
+        return marker;
+    }
+});
+
+$.getJSON("/geojson_cleanmanh_netw", function(data){
+    collisions_layer_cleanmanhnetw.addData(data);
+});
+
+var collisions_layer_boro1netw = L.geoJson(false, {
+    pointToLayer: function(feature,latlng){
+        var marker = L.circleMarker(latlng, geojsonMarkerOptions);
+        marker.bindPopup("<b>Longitude: </b>" + feature.properties["Lon"] + "<br/>" +
+                         "<b>Latitude: </b>" + feature.properties["Lat"] + "<br/>");
+        return marker;
+    }
+});
+
+$.getJSON("/geojson_boro1_netw", function(data){
+    collisions_layer_boro1netw.addData(data);
 });
 
 var baseMaps = {
@@ -68,8 +198,16 @@ var baseMaps = {
 };
 
 var overlayMaps = {
-    "Collisions": clusters,
-    "Cycling lanes": cycling_lanes
+    "All Collisions": clusters_all,
+    "Bike Collisions": clusters_bike,
+    "Pedestrian Collisions": clusters_ped,
+//    "Manhattan Network": clusters_manhnetw,
+//    "Manhattan Network Clean": clusters_cleanmanhnetw,
+    "Network": collisions_layer_cleanmanhnetw,
+    "Network clean": collisions_layer_boro1netw,
+//    "Cycling lanes": cycling_lanes,
+    "Cycling heatmap": cycling_heat,
+    "Running heatmap": running_heat
 };
 
 // L.control.layers(baseMaps, overlayMaps).addTo(map);
